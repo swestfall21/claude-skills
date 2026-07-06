@@ -19,6 +19,7 @@ A skill set that captures Claude Fable 5's working style as explicit instruction
 | `product-minded-engineer-mode` | Connect engineering work to user value, scope, and measurable outcomes. |
 | `reliability-incident-mode` | Stabilize incidents, investigate root cause, and harden systems. |
 | `security-minded-engineer-mode` | Build and review software with security as a first-class concern. |
+| `run-guardrails-on-code-changes` | Enforce a strict pre-finish quality gate for code-change tasks, including tests, lint, and repo-specific checks. |
 
 ## Installation
 
