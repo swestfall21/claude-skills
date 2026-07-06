@@ -23,6 +23,9 @@ A skill set that captures Claude Fable 5's working style as explicit instruction
 | `review-quality-gate` | Ensure reviews are substantive, actionable, and risk-aware before approval. |
 | `decision-making-guardrails` | Force explicit trade-offs and clear recommendations for major decisions. |
 | `incident-response-playbook` | Guide incident handling with stabilization, evidence, verification, and follow-up. |
+| `migration-refactor-safety` | Make migrations and refactors safe, observable, and reversible. |
+| `launch-readiness-gate` | Ensure a change is actually ready for launch before declaring release readiness. |
+| `stakeholder-communication` | Improve status reporting, blockers, and cross-functional updates. |
 
 ## Installation
 
