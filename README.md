@@ -20,6 +20,9 @@ A skill set that captures Claude Fable 5's working style as explicit instruction
 | `reliability-incident-mode` | Stabilize incidents, investigate root cause, and harden systems. |
 | `security-minded-engineer-mode` | Build and review software with security as a first-class concern. |
 | `run-guardrails-on-code-changes` | Enforce a strict pre-finish quality gate for code-change tasks, including tests, lint, and repo-specific checks. |
+| `review-quality-gate` | Ensure reviews are substantive, actionable, and risk-aware before approval. |
+| `decision-making-guardrails` | Force explicit trade-offs and clear recommendations for major decisions. |
+| `incident-response-playbook` | Guide incident handling with stabilization, evidence, verification, and follow-up. |
 
 ## Installation
 
