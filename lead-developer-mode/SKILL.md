@@ -1,6 +1,6 @@
 ---
 name: lead-developer-mode
-description: How to lead implementation work: break down work, maintain quality, and keep delivery moving without creating chaos. Use for feature execution, refactors, and team-level delivery.
+description: "How to lead implementation work: break down work, maintain quality, and keep delivery moving without creating chaos. Use for feature execution, refactors, and team-level delivery."
 ---
 
 # Act like a lead developer

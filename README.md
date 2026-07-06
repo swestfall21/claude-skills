@@ -1,6 +1,11 @@
-# Fable-emulation skills
+# Senior engineering skills for Claude
 
-A skill set that captures Claude Fable 5's working style as explicit instructions, so older models (Opus, Sonnet) approximate it once Fable access ends. Each skill is independently loadable; `fable-mode` is the capstone that adopts all of them at once.
+A portable pack of Claude skills — plain markdown skill folders — that encode senior software engineering behavior. The repo has two halves:
+
+- **Fable-emulation skills**: instructions that capture Claude Fable 5's working style so older models (Opus, Sonnet) approximate it once Fable access ends. `fable-mode` is the capstone that adopts all six companion disciplines at once.
+- **Senior engineering skills**: role modes (architect, staff engineer, lead developer, and others), operational guardrails (review gates, incident playbooks, launch readiness), and ready-made bundle presets that combine them for common work modes.
+
+Each skill is independently loadable, and all of them are plain markdown, so they can be copied between machines or pasted into any agent tool's custom instructions.
 
 ## The skills
 
@@ -27,6 +32,25 @@ A skill set that captures Claude Fable 5's working style as explicit instruction
 | `launch-readiness-gate` | Ensure a change is actually ready for launch before declaring release readiness. |
 | `stakeholder-communication` | Improve status reporting, blockers, and cross-functional updates. |
 | `senior-operating-system` | A capstone bundle that activates a coherent senior-engineering operating mode for delivery, architecture, leadership, reliability, or launch work. |
+| `delivery-bundle` | A ready-made preset for everyday implementation, review, and delivery work. |
+| `architecture-bundle` | A ready-made preset for architecture, design trade-offs, and system shaping. |
+| `staff-engineering-bundle` | A ready-made preset for staff-level coordination, leverage, and cross-team alignment. |
+| `reliability-bundle` | A ready-made preset for incidents, operational recovery, and hardening. |
+| `product-delivery-bundle` | A ready-made preset for product-minded delivery with strong scope and launch discipline. |
+
+## Ready-made bundle presets
+
+These preset skill folders combine a small set of related skills into a single, reusable operating mode for common work types:
+
+| Bundle preset | Best for |
+|---|---|
+| `delivery-bundle` | everyday implementation, bug fixes, and delivery work |
+| `architecture-bundle` | architecture, system design, and major refactors |
+| `staff-engineering-bundle` | staff-level coordination, influence, and cross-team alignment |
+| `reliability-bundle` | incidents, operational stability, and recovery |
+| `product-delivery-bundle` | product-focused delivery with clear scope and launch readiness |
+
+In Claude Code, these are regular skill folders, so you can invoke them directly like `/delivery-bundle` or include them in your project instructions when you want a preset to be active.
 
 ## Installation
 
@@ -35,8 +59,9 @@ A skill set that captures Claude Fable 5's working style as explicit instruction
 Copy (or symlink) into your personal skills directory so Claude Code discovers them in every project:
 
 ```bash
+git clone https://github.com/swestfall21/claude-skills.git
 mkdir -p ~/.claude/skills
-cp -r path/to/claude-skills/*/ ~/.claude/skills/
+cp -r claude-skills/*/ ~/.claude/skills/
 ```
 
 Or per-project: copy into `<project>/.claude/skills/`.
@@ -59,35 +84,29 @@ If you are using a tool that does not support Claude-style skill discovery direc
 
 This repo is primarily designed for Claude Code style skill loading, so the exact path or mechanism will vary for tools like Kiro. For those environments, the same guidance still applies: bring the markdown files over and use them as custom instructions.
 
-### Kiro / Opus 4.6 setup example
+### Kiro / Opus setup example
 
-If you want to use these skills in a Kiro-style setup that is configured with Opus 4.6, the simplest path is to treat the skill folders as reusable instruction packs.
+If you want to use these skills in a Kiro-style setup that is configured with an Opus-class model, the simplest path is to treat the skill folders as reusable instruction packs.
 
 1. Clone or copy this repository to a location you can access from the machine running Kiro.
 2. Copy the skill folders you want to use into a local folder such as `~/skills`.
-3. In the tool's custom instructions, prompt file, or project instructions, add a short block like this:
+3. Add a short install snippet like this to your setup script or instructions:
 
-```text
-I should follow the guidance in these skill packs when relevant:
-- architect-mode
-- staff-engineer-mode
-- lead-developer-mode
-- product-minded-engineer-mode
-- reliability-incident-mode
-- security-minded-engineer-mode
-- fable-mode
-- lead-with-outcome
-- finish-the-turn
-- truthful-reporting
-- surgical-questions
-- code-like-a-local
-- lean-tool-use
+```bash
+mkdir -p ~/skills
+cp -r path/to/claude-skills/delivery-bundle ~/skills/
 ```
 
-4. If the environment supports file-based instruction loading, point it at the SKILL.md files in those folders.
-5. If it does not support that directly, paste the contents of the relevant SKILL.md files into your agent instructions or system prompt.
+4. In the tool's custom instructions, prompt file, or project instructions, add a short block like this:
 
-For Opus 4.6, this is a good fit because the model can still benefit from the structure and defaults even if it is not using Claude Code's native skill discovery.
+```text
+When the task is delivery-oriented, activate the delivery-bundle preset and follow its operating posture. For architecture-heavy work, use architecture-bundle. For incident work, use reliability-bundle. For staff-level coordination, use staff-engineering-bundle. For product-focused delivery, use product-delivery-bundle.
+```
+
+5. If the environment supports file-based instruction loading, point it at the SKILL.md files in those folders.
+6. If it does not support that directly, paste the contents of the relevant SKILL.md files into your agent instructions or system prompt.
+
+For Opus-class models, this is a good fit because the model can still benefit from the structure and defaults even if it is not using Claude Code's native skill discovery.
 
 ## Usage
 

@@ -1,6 +1,6 @@
 ---
 name: staff-engineer-mode
-description: How to operate like a staff engineer: set direction, reduce ambiguity, and create leverage across teams. Use for multi-team work, high-impact systems, and strategic execution.
+description: "How to operate like a staff engineer: set direction, reduce ambiguity, and create leverage across teams. Use for multi-team work, high-impact systems, and strategic execution."
 ---
 
 # Act like a staff engineer

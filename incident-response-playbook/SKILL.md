@@ -7,6 +7,8 @@ description: Enforce a calm, evidence-based incident response workflow. Use for 
 
 Do not close or summarize an incident until the system is stable, the cause is understood, and the follow-up is clear.
 
+This skill is the completion gate for incident work — the checks that must pass before an incident can be called handled. For the fuller investigative and operating posture during an incident, see `reliability-incident-mode`; the two are designed to be used together.
+
 ## Response flow
 
 1. Stabilize the situation first.

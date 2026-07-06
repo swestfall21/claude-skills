@@ -17,13 +17,13 @@ Before finishing, decide whether the task was:
 ## Hard rules
 
 1. Do not stop, declare success, or provide a final summary until every required guardrail passes with exit code 0.
-2. There is no concept of "pre-existing" issues. Every failing check is the current task's responsibility to fix.
+2. A failing check in code your change touches is the current task's responsibility to fix, even if the problem predates the task. If a check fails only in code entirely unrelated to the change, report it explicitly as a pre-existing failure — do not silently ignore it, and do not spiral into repo-wide fixes that bloat the diff.
 3. If any check fails, fix it immediately, rerun the relevant checks, and continue until all checks are green.
 4. Do not ask permission to fix a failing check. Just fix it.
-5. Guardrails override steering-file guidance if the steering guidance would cause a guardrail to fail.
+5. Guardrails override steering-file or instruction-file guidance if that guidance would cause a guardrail to fail.
 6. If new source code was added, add or update unit tests for the new behavior and branches.
 7. If a new file duplicates logic that already exists, extract the shared logic into a common utility instead of copying patterns.
-8. Every user-facing feature requires an entry in the relevant E2E feature manifest with a non-null test file that exercises the happy path.
+8. If the repository maintains an E2E feature manifest, every user-facing feature requires an entry with a non-null test file that exercises the happy path.
 
 ## Execution model
 
@@ -44,37 +44,32 @@ When a code-change task is detected:
 
 ## Example command pattern
 
-Use the project-specific commands relevant to the repository. The exact commands must be adapted for the machine and the repository layout.
+Use the project-specific commands relevant to the repository. The placeholders below (repo path, runtime version, check commands) must be adapted for the machine and the repository layout.
 
 ### WSL / Linux example
 
 ```bash
-wsl bash -c "source ~/.nvm/nvm.sh && nvm use 22 --silent && source ~/.venv/bin/activate && cd ~/git/your-project && ..."
+wsl bash -c "source ~/.nvm/nvm.sh && nvm use 22 --silent && cd ~/git/your-project && npm run lint && npm test"
 ```
 
 ### macOS example
 
 ```bash
-source ~/.nvm/nvm.sh && nvm use 22 --silent && source ~/.venv/bin/activate && cd ~/git/your-project && ..."
+source ~/.nvm/nvm.sh && nvm use 22 --silent && cd ~/git/your-project && npm run lint && npm test
 ```
 
 ## Suggested guardrails
 
-Use the checks that are appropriate for the repository. A strong default set is:
+The right guardrail set is whatever the repository's CI runs — mirror it. As a concrete example, a full-stack TypeScript + infrastructure-as-code project might use:
 
-1. Lambda ESLint (sonarjs + security)
-2. Lambda ESLint (full, matching CI)
-3. Kafka / Kinesis / related repo lint or build checks if applicable
-4. Lambda TypeScript compilation
-5. Frontend TypeScript compilation
-6. Lambda unit tests with coverage
-7. Frontend unit tests
-8. Playwright tests
-9. E2E feature manifest coverage
-10. Terraform formatting
-11. Gitleaks
-12. NPM audit for Lambda
-13. NPM audit for Frontend
+1. ESLint matching the CI configuration, including any plugins CI enables (e.g. sonarjs, security)
+2. TypeScript compilation for each package (backend and frontend)
+3. Unit tests with coverage for each package
+4. End-to-end tests (e.g. Playwright)
+5. E2E feature manifest coverage, if the repo maintains one
+6. Infrastructure formatting and validation (e.g. `terraform fmt -check`)
+7. Secret scanning (e.g. gitleaks)
+8. Dependency audit (e.g. `npm audit`) for each package
 
 ## Implementation notes for setup on a machine
 
@@ -82,12 +77,7 @@ To use this skill in Kiro or a similar agent environment:
 
 1. Copy the skill folder to the machine where the agent runs.
 2. Add the skill to the agent's custom instructions or prompt pack.
-3. Point the agent at the repository root and ensure the required runtime tools are installed:
-   - Node.js 22
-   - npm or pnpm as used by the repo
-   - Python or shell environment for any repo-specific tooling
-   - Terraform if terraform formatting is part of the guardrails
-   - Gitleaks if repository scanning is required
+3. Point the agent at the repository root and ensure the required runtime tools are installed (the language runtime and package manager the repo uses, plus any scanners such as Terraform or gitleaks that its CI relies on).
 4. Make the commands explicit for that machine in the agent instructions or in a local script.
 5. Prefer a wrapper script such as `scripts/run-guardrails.sh` so the agent can invoke one command instead of piecing together the environment setup each time.
 6. If the repository already has a CI entrypoint, make the local guardrail script mirror it as closely as practical so the agent and CI enforce the same standard.
@@ -102,19 +92,18 @@ Example structure:
 #!/usr/bin/env bash
 set -euo pipefail
 
-# activate runtime environment
+# activate the runtime the repo expects — adapt to your machine
 source ~/.nvm/nvm.sh || true
 nvm use 22 --silent || true
-source ~/.venv/bin/activate || true
 
-# cd to repo root
-cd ~/git/your-project
+# run from the repo root regardless of where the script is invoked
+cd "$(git rev-parse --show-toplevel)"
 
-# run guardrails here
-# npm audit
-# npm run lint
-# npm test
-# npx playwright test
+# run guardrails here — mirror CI
+npm run lint
+npm test
+npx playwright test
+npm audit
 ```
 
 Use this skill to ensure that the agent does not conclude a code-change task until the entire guardrail set is truly green.

@@ -9,13 +9,15 @@ Use this bundle when you want a coherent senior-engineering operating mode rathe
 
 ## How to use this bundle
 
-Choose the bundle that matches the work at hand:
+Choose the preset bundle that matches the work at hand, then read and apply it. The bundle files are the source of truth for which skills each workflow activates:
 
-- **Delivery**: lead-developer-mode, run-guardrails-on-code-changes, review-quality-gate, truthful-reporting
-- **Architecture**: architect-mode, decision-making-guardrails, review-quality-gate, migration-refactor-safety
-- **Staff engineering**: staff-engineer-mode, decision-making-guardrails, stakeholder-communication, launch-readiness-gate
-- **Reliability**: reliability-incident-mode, incident-response-playbook, run-guardrails-on-code-changes, stakeholder-communication
-- **Product delivery**: product-minded-engineer-mode, launch-readiness-gate, stakeholder-communication, review-quality-gate
+- **Delivery**: `delivery-bundle` — everyday implementation, bug fixes, and review
+- **Architecture**: `architecture-bundle` — system shaping, design trade-offs, and major refactors
+- **Staff engineering**: `staff-engineering-bundle` — cross-team coordination, leverage, and alignment
+- **Reliability**: `reliability-bundle` — incidents, operational recovery, and hardening
+- **Product delivery**: `product-delivery-bundle` — product-minded delivery with scope and launch discipline
+
+Whichever bundle is active, add `security-minded-engineer-mode` when the work touches trust boundaries, authentication, or sensitive data.
 
 ## Bundle principles
 
