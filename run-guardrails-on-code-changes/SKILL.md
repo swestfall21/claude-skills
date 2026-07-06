@@ -34,6 +34,14 @@ When a code-change task is detected:
 3. Fix failures immediately and rerun until the checks pass.
 4. Only then provide the final answer.
 
+## Additional operational rules
+
+- Use the repository's CI pipeline or existing project scripts as the source of truth for which checks matter.
+- If a guardrail is not applicable to the current project, mark it as skipped with a reason rather than silently omitting it.
+- If the required runtime or toolchain is missing, install or configure it if possible; otherwise report the blocker explicitly instead of pretending the check was run.
+- Prefer one reproducible entrypoint, such as a wrapper script or Makefile target, over ad hoc shell fragments.
+- When reporting results, state exactly what was run, what passed, and what failed.
+
 ## Example command pattern
 
 Use the project-specific commands relevant to the repository. The exact commands must be adapted for the machine and the repository layout.
@@ -82,6 +90,7 @@ To use this skill in Kiro or a similar agent environment:
    - Gitleaks if repository scanning is required
 4. Make the commands explicit for that machine in the agent instructions or in a local script.
 5. Prefer a wrapper script such as `scripts/run-guardrails.sh` so the agent can invoke one command instead of piecing together the environment setup each time.
+6. If the repository already has a CI entrypoint, make the local guardrail script mirror it as closely as practical so the agent and CI enforce the same standard.
 
 ## Recommended wrapper script pattern
 
