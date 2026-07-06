@@ -1,17 +1,20 @@
 #!/usr/bin/env bash
-# Stop hook: block ending the turn when code was changed but no test/check
-# command was observed in the session. A deterministic backstop for the
-# run-guardrails-on-code-changes and verify-by-exercising skills.
+# Stop hook: block ending the turn when code was edited this session and the
+# last test run happened BEFORE the last code edit (or never). A deterministic
+# backstop for the run-guardrails-on-code-changes and verify-by-exercising
+# skills — including the stale-test case where a suite passed early in a long
+# session and the code changed afterward.
 #
-# This is a template — adapt TEST_PATTERN below to your project's real
-# test entrypoints. It errs on the permissive side: any matching command
-# anywhere in the transcript satisfies it.
+# This is a template — adapt TEST_PATTERN below to your projects' real test
+# entrypoints. Known limitation: file changes made through shell commands
+# (sed, patch, code generators) are not tracked as edits; only Edit/Write/
+# NotebookEdit tool calls are.
 
 # capture the hook's JSON input before the heredoc claims stdin
 INPUT="$(cat)"
 
 python3 - "$INPUT" <<'PY'
-import json, re, subprocess, sys
+import json, re, sys
 
 data = json.loads(sys.argv[1] or "{}")
 
@@ -19,40 +22,53 @@ data = json.loads(sys.argv[1] or "{}")
 if data.get("stop_hook_active"):
     sys.exit(0)
 
-# Any non-doc changes in the working tree?
-try:
-    out = subprocess.run(
-        ["git", "status", "--porcelain"],
-        capture_output=True, text=True, timeout=10,
-    ).stdout
-except Exception:
-    sys.exit(0)  # not a git repo / git unavailable — stay out of the way
-
 DOC_SUFFIXES = (".md", ".txt", ".rst")
-changed = [
-    line for line in out.splitlines()
-    if line.strip() and not line.split()[-1].endswith(DOC_SUFFIXES)
-]
-if not changed:
-    sys.exit(0)
-
-# Was a test/check command run at some point this session?
 TEST_PATTERN = re.compile(
     r"npm (run )?test|npx (vitest|jest|playwright)|pytest|go test|cargo test"
     r"|make (test|check)|mvn (test|verify)|gradle(w)? test"
 )
+
+# Walk the transcript in order, tracking the last code edit and the last
+# actually-executed test command (prose mentions don't count).
+last_edit = last_test = -1
 try:
     with open(data["transcript_path"], encoding="utf-8") as f:
-        for line in f:
-            if TEST_PATTERN.search(line):
-                sys.exit(0)
+        for i, line in enumerate(f):
+            try:
+                entry = json.loads(line)
+            except ValueError:
+                continue
+            message = entry.get("message") or {}
+            content = message.get("content")
+            if not isinstance(content, list):
+                continue
+            for block in content:
+                if not isinstance(block, dict) or block.get("type") != "tool_use":
+                    continue
+                name = block.get("name", "")
+                inp = block.get("input") or {}
+                if name in ("Edit", "Write", "NotebookEdit"):
+                    path = inp.get("file_path") or inp.get("notebook_path") or ""
+                    if path and not path.endswith(DOC_SUFFIXES):
+                        last_edit = i
+                elif name == "Bash":
+                    if TEST_PATTERN.search(inp.get("command", "")):
+                        last_test = i
 except (KeyError, OSError):
+    sys.exit(0)  # no readable transcript — stay out of the way
+
+if last_edit == -1 or last_test > last_edit:
     sys.exit(0)
 
+if last_test == -1:
+    reason = "no test command was run this session"
+else:
+    reason = "code was edited after the last test run, so the results are stale"
+
 print(
-    "Code files were changed this session but no test command was observed. "
-    "Run the project's tests before finishing — or state explicitly in your "
-    "final message why they cannot be run and what remains unverified.",
+    f"Code files were changed but {reason}. Rerun the project's tests before "
+    "finishing — or state explicitly in your final message why they cannot be "
+    "run and what remains unverified.",
     file=sys.stderr,
 )
 sys.exit(2)  # exit 2 blocks the stop; stderr is fed back to Claude

@@ -129,7 +129,7 @@ For other tools without file-based instruction loading, paste the contents of th
 Skills are instructions; hooks are guarantees. The [`hooks/`](hooks/) directory contains ready-made Claude Code hooks that mechanically enforce the two behaviors that matter most:
 
 - **`session-start-fable.sh`** (SessionStart) — injects fable-mode into every session automatically, so nobody has to remember to invoke it.
-- **`stop-code-change-guard.sh`** (Stop) — refuses to let a turn end when code files changed but no test command ran; Claude is sent back to run the tests or state explicitly why it can't. A deterministic backstop for `run-guardrails-on-code-changes` and `verify-by-exercising`.
+- **`stop-code-change-guard.sh`** (Stop) — refuses to let a turn end when code was edited and no test command ran *after the last edit* (a suite that passed early in a long session doesn't excuse edits made since); Claude is sent back to run the tests or state explicitly why it can't. A deterministic backstop for `run-guardrails-on-code-changes` and `verify-by-exercising`.
 
 See [hooks/README.md](hooks/README.md) for installation and how to adapt the test-command pattern to your projects. The rule of thumb: use instructions for judgment, hooks for invariants.
 
