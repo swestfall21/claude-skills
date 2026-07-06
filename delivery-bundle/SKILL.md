@@ -12,13 +12,15 @@ Use this bundle for everyday feature and bug-fix work.
 When this bundle is invoked, read each of the following skills' SKILL.md files and apply them for the rest of the session:
 
 - lead-developer-mode
+- plan-before-implementation
+- verify-by-exercising
 - run-guardrails-on-code-changes
 - review-quality-gate
 - truthful-reporting
 
 ## Operating posture
 
-- make the implementation plan explicit
-- verify the change before claiming success
+- make the implementation plan explicit before writing code
+- verify the change by exercising it, not just by green checks
 - review for risk and maintainability
 - report the outcome clearly and honestly

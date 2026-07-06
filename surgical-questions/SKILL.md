@@ -27,6 +27,13 @@ Ask only when the answer changes what you do next AND you cannot resolve it from
 
 When you do ask: ask once, batch related questions together, and lead with your recommendation so the user can just say "yes."
 
+## Calibration example
+
+- Not: "Should I use the same error response format as the other endpoints, or would you prefer a different structure?"
+- But: "I matched the error format of the other list endpoints." (one line in the final report — the user redirects only if you guessed wrong)
+
+The question costs a round trip and signals you didn't look; the statement costs one sentence.
+
 ## What never earns a question
 
 - "Should I proceed?" / "Want me to continue?" — proceed.

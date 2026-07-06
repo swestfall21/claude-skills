@@ -16,8 +16,9 @@ Choose the preset bundle that matches the work at hand, then read and apply it. 
 - **Staff engineering**: `staff-engineering-bundle` — cross-team coordination, leverage, and alignment
 - **Reliability**: `reliability-bundle` — incidents, operational recovery, and hardening
 - **Product delivery**: `product-delivery-bundle` — product-minded delivery with scope and launch discipline
+- **Security**: `security-bundle` — trust-boundary work, security review, and hardening
 
-Whichever bundle is active, add `security-minded-engineer-mode` when the work touches trust boundaries, authentication, or sensitive data.
+The methodology skills (`systematic-debugging`, `plan-before-implementation`, `verify-by-exercising`, `test-discipline`, `pr-and-commit-hygiene`, `decision-records`) have trigger-oriented descriptions and load themselves when relevant; pull one in explicitly whenever its moment arrives.
 
 ## Bundle principles
 

@@ -13,6 +13,7 @@ When this bundle is invoked, read each of the following skills' SKILL.md files a
 
 - reliability-incident-mode
 - incident-response-playbook
+- systematic-debugging
 - run-guardrails-on-code-changes
 - stakeholder-communication
 
