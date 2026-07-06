@@ -26,6 +26,7 @@ A skill set that captures Claude Fable 5's working style as explicit instruction
 | `migration-refactor-safety` | Make migrations and refactors safe, observable, and reversible. |
 | `launch-readiness-gate` | Ensure a change is actually ready for launch before declaring release readiness. |
 | `stakeholder-communication` | Improve status reporting, blockers, and cross-functional updates. |
+| `senior-operating-system` | A capstone bundle that activates a coherent senior-engineering operating mode for delivery, architecture, leadership, reliability, or launch work. |
 
 ## Installation
 
