@@ -100,27 +100,50 @@ This repo is primarily designed for Claude Code style skill loading, but the sam
 
 Kiro loads instructions from **steering files**: markdown files in `.kiro/steering/` (one workspace) or `~/.kiro/steering/` (global, all workspaces). Each skill here becomes one steering file — the only transformation needed is replacing the Claude-style frontmatter with Kiro's inclusion frontmatter.
 
-**Quickstart** — install a set of skills globally, always-on:
+**Quickstart** — install all skills globally with the recommended inclusion strategy:
 
 ```bash
 git clone https://github.com/swestfall21/claude-skills.git
 mkdir -p ~/.kiro/steering
-for skill in lead-developer-mode run-guardrails-on-code-changes review-quality-gate truthful-reporting; do
+
+# Always-on: the two skills that should run in every session
+for skill in fable-mode run-guardrails-on-code-changes; do
   { printf -- '---\ninclusion: always\n---\n\n'
     awk 'f; /^---$/ && ++c == 2 {f=1}' claude-skills/$skill/SKILL.md
   } > ~/.kiro/steering/$skill.md
 done
+
+# Manual: everything else, available on demand via /skill-name
+for d in claude-skills/*/; do
+  [ -f "$d/SKILL.md" ] || continue
+  skill="$(basename "$d")"
+  case "$skill" in fable-mode|run-guardrails-on-code-changes) continue ;; esac
+  { printf -- '---\ninclusion: manual\n---\n\n'
+    awk 'f; /^---$/ && ++c == 2 {f=1}' "$d/SKILL.md"
+  } > ~/.kiro/steering/$skill.md
+done
 ```
 
-Edit the `for skill in ...` list to choose your skills (the list above is the delivery-bundle set), and use `.kiro/steering/` inside a project instead of `~/.kiro/steering/` to scope them to one workspace.
+Use `.kiro/steering/` inside a project instead of `~/.kiro/steering/` to scope skills to one workspace.
 
-**Choosing an inclusion mode** — swap `inclusion: always` in the snippet for the behavior you want:
+**Why this split**: `fable-mode` is the capstone behavioral profile (it already covers the six companion skills: `lead-with-outcome`, `finish-the-turn`, `truthful-reporting`, `surgical-questions`, `code-like-a-local`, `lean-tool-use`). `run-guardrails-on-code-changes` ensures code quality gates always run. Everything else is situational — load it when the work calls for it.
 
-- `inclusion: always` — loaded in every interaction. Right for the behavioral core (e.g. `fable-mode`, `truthful-reporting`).
-- `inclusion: manual` — loaded on demand; manual steering files appear as slash commands in Kiro chat, so `/delivery-bundle` works much like it does in Claude Code (you can also reference them inline with `#file-name`).
+**Using manual skills**: In Kiro chat, type `/` followed by the skill name to activate it for the session:
+
+- `/delivery-bundle` — everyday feature and bug-fix work
+- `/staff-engineer-mode` — cross-team, high-impact decisions
+- `/architecture-bundle` — system design and major refactors
+- `/systematic-debugging` — structured bug investigation
+
+You can also reference them inline with the `#` context key (e.g. `#delivery-bundle`).
+
+**Inclusion modes** — the three options:
+
+- `inclusion: always` — loaded in every interaction. Use sparingly for the behavioral core.
+- `inclusion: manual` — loaded on demand via `/skill-name` or `#skill-name` in chat. Right for role modes, bundles, and methodology skills.
 - `inclusion: auto` — Kiro includes the file when the request matches its description, which approximates Claude Code's trigger-based skill discovery. Keep the skill's `description` line in the frontmatter for this mode.
 
-**Bundles in Kiro**: install a bundle's listed skills directly as steering files (as in the quickstart) rather than the bundle file itself. The bundle's "read these SKILL.md files" instruction only works if the cloned repo stays accessible to the agent.
+**Bundles in Kiro**: install the bundle files themselves as manual steering files. When you invoke `/delivery-bundle`, Kiro loads the bundle's instructions which reference the component skills — since all skills are installed as steering files, they're available to be pulled in.
 
 For other tools without file-based instruction loading, paste the contents of the relevant SKILL.md files into the agent's custom instructions or system prompt — the skills are model-agnostic and still improve structure and defaults for Opus-class or other models.
 
